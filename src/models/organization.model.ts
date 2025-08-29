@@ -4,7 +4,7 @@ interface IOrganization extends Document {
   name: string;
   password: string;
   description: string;
-  phoneNumber: number;
+  phoneNumber: string;
   contactEmail: string;
 }
 
@@ -23,7 +23,7 @@ const OrganizationSchema = new Schema({
     required: true,
   },
   phoneNumber: {
-    type: Number,
+    type: String,
     required: true,
   },
   contactEmail: {

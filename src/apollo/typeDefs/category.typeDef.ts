@@ -33,6 +33,12 @@ export const categoryTypeDef = `
     eventId: ID
   }
 
+  type CategoryResponse{
+  code:Int!
+  message:String!
+  data:Category!
+  }
+
   extend type Query {
     categories: [Category!]!
     category(id: ID!): Category
@@ -40,8 +46,8 @@ export const categoryTypeDef = `
   }
 
   extend type Mutation {
-    createCategory(input: CreateCategoryInput!): Category!
-    updateCategory(input: UpdateCategoryInput!): Category!
+    createCategory(input: CreateCategoryInput!): CategoryResponse!
+    updateCategory(input: UpdateCategoryInput!): CategoryResponse!
     deleteCategory(id: ID!): Boolean!
   }
 `;

@@ -2,12 +2,13 @@ import express from "express";
 import * as dotenv from "dotenv";
 import { logger } from "./utils/logger";
 import { ApolloServer } from "@apollo/server";
-import {expressMiddleware} from "@as-integrations/express5"
+import { expressMiddleware } from "@as-integrations/express5";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
 import cors, { CorsRequest } from "cors";
 import { connectToDB } from "./config/db.config";
 import { resolvers, typeDefs } from "./apollo";
+import { JWTUtils } from "./utils/jwtUtils";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ interface Context {
   user?: {
     id: string;
     email: string;
+    name: string;
   } | null;
 }
 
@@ -33,41 +35,68 @@ const server = new ApolloServer<Context>({
 async function startServer() {
   await server.start();
 
-  // Apply middleware in correct order
   app.use(
-    '/graphql',
+    "/graphql",
     cors<CorsRequest>({
       origin: [
-        'http://localhost:5173', 
-        'http://localhost:5174', 
-        'http://localhost:5000/graphql',
-        '*',
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5000/graphql",
+        "*",
       ],
-      methods: ['GET', 'POST','PATCH','PUT','DELETE'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+      allowedHeaders: ["Content-Type", "Authorization"],
     }),
-   express.json(),
-  expressMiddleware(server),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const authHeader = req.headers.authorization;
+        let user: {
+          id: string;
+          email: string;
+          name: string;
+        } | null = null;
+        if (authHeader) {
+          const token = authHeader.replace("Bearer ", "");
+          try {
+            const verified = JWTUtils.__verifyToken(
+              token,
+              process.env.JWT_SECRET!,
+            );
+            if (verified.status === 200 && verified.data) {
+              user = verified.data as {
+                id: string;
+                email: string;
+                name: string;
+              };
+            }
+          } catch (error) {
+            logger.error("Error parsing token:", error);
+          }
+        }
+        return { user };
+      },
+    }),
   );
 
   // Basic route
   app.get("/", (req, res) => {
-    res.send("Hello World, Nestify");
+    res.send("Hello World, VoteMaster");
   });
 
-  await new Promise<void>((resolve) => 
-    httpServer.listen({ port: PORT }, () => resolve())
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: PORT }, () => resolve()),
   );
-  
+
   logger.info(`✅ Server is running on port ${PORT}`);
   logger.info(`✅ GraphQL is running on http://localhost:${PORT}/graphql`);
-  
+
   // Connect to DB
-  await connectToDB(process.env.MONGODB_URI as string);
+  connectToDB(process.env.MONGODB_URI as string);
   logger.info(`✅ MongoDB is connected`);
 }
 
-startServer().catch(error => {
-  logger.error('Failed to start server:', error);
+startServer().catch((error) => {
+  logger.error("Failed to start server:", error);
   process.exit(1);
 });

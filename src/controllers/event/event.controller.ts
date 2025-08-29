@@ -2,13 +2,30 @@ import Event from "../../models/event.model";
 import { logger } from "../../utils/logger";
 export const eventController = {
   createEvent: async (_: any, args: any, context: any) => {
-    const { name, description, eventImage, pricePerVote, startDate, endDate } =
-      args;
+    const {
+      name,
+      description,
+      organization,
+      slug,
+      eventImage,
+      pricePerVote,
+      startDate,
+      endDate,
+    } = args.event;
 
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const eventExists = await Event.findOne({ name });
       if (eventExists) {
-        throw new Error("Event alreadey exists");
         logger.warn("Event already exists");
         return {
           code: 400,
@@ -16,9 +33,12 @@ export const eventController = {
           message: "Event already exists",
         };
       }
+      const urlSlug = name?.toLowerCase()?.replace(/\s+/g, "-");
       const event = await Event.create({
         name,
         description,
+        slug: urlSlug,
+        organization: context?.user?.id.toString(),
         eventImage,
         pricePerVote,
         startDate,
@@ -35,8 +55,7 @@ export const eventController = {
         data: populatedEvent,
       };
     } catch (error) {
-      logger.error("Failed to create event");
-      throw new Error("Failed to create event");
+      logger.error("Failed to create event", error);
       return {
         code: 500,
         success: false,
@@ -47,6 +66,16 @@ export const eventController = {
   getEvents: async (_: any, args: any, context: any) => {
     const { limit, offset } = args;
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const events = await Event.find()
         .skip(offset)
         .limit(limit)
@@ -60,7 +89,6 @@ export const eventController = {
       };
     } catch (error) {
       logger.error("Failed to fetch events");
-      throw new Error("Failed to fetch events");
       return {
         code: 500,
         success: false,
@@ -71,6 +99,16 @@ export const eventController = {
   getEventById: async (_: any, args: any, context: any) => {
     const { id } = args;
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const event = await Event.findById(id).populate("organization");
       logger.info("Event fetched successfully");
       return {
@@ -81,7 +119,6 @@ export const eventController = {
       };
     } catch (error) {
       logger.error("Failed to fetch event");
-      throw new Error("Failed to fetch event");
       return {
         code: 500,
         success: false,
@@ -100,6 +137,16 @@ export const eventController = {
       organizationId,
     } = args;
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const event = await Event.findByIdAndUpdate(
         id,
         { title, description, startDate, endDate, location, organizationId },
@@ -114,7 +161,6 @@ export const eventController = {
       };
     } catch (error) {
       logger.error("Failed to update event");
-      throw new Error("Failed to update event");
       return {
         code: 500,
         success: false,
@@ -135,7 +181,6 @@ export const eventController = {
       };
     } catch (error) {
       logger.error("Failed to delete event");
-      throw new Error("Failed to delete event");
       return {
         code: 500,
         success: false,
