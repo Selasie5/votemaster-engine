@@ -1,12 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface IEvents extends Document {
+  organization: string;
   name: string;
-  event: string;
   slug: string;
   description: string;
   eventImage: string;
-  price: number;
+  pricePerVote: number;
   startDate: Date;
   endDate: Date;
   createdAt: Date;
@@ -15,18 +15,20 @@ interface IEvents extends Document {
 
 const EventSchema = new Schema(
   {
+    organization: {
+      type: Schema.Types.ObjectId,
+      ref: "Organization",
+      required: true,
+    },
     name: {
       type: String,
       required: true,
-    },
-    event: {
-      type: Schema.Types.ObjectId,
-      ref: "Event",
-      required: true,
+      unique: true,
     },
     slug: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -37,7 +39,7 @@ const EventSchema = new Schema(
       type: String,
       required: false,
     },
-    price: {
+    pricePerVote: {
       type: Number,
       required: true,
     },
@@ -54,6 +56,15 @@ const EventSchema = new Schema(
     timestamps: true,
   },
 );
+
+EventSchema.index({ name: 1, slug: 1 });
+
+EventSchema.pre("deleteOne", { document: true }, async function (next) {
+  await mongoose.model("Category").deleteMany({ eventId: this._id });
+  await mongoose.model("Nominees").deleteMany({ eventId: this._id });
+  await mongoose.model("Votes").deleteMany({ eventId: this._id });
+  next();
+});
 
 const Event = mongoose.model<IEvents>("Event", EventSchema);
 export default Event;

@@ -8,9 +8,24 @@ export const categoryController = {
     const { name, description, eventId } = input;
 
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const event = await Event.findById(eventId);
       if (!event) {
-        throw new Error("Event not found");
+        logger.error("Event not found");
+        return {
+          message: "Event not found",
+          code: 404,
+          success: false,
+        };
       }
 
       const existingCategory = await Category.findOne({
@@ -19,9 +34,12 @@ export const categoryController = {
       });
 
       if (existingCategory) {
-        throw new Error(
-          "Category with this name already exists for this event",
-        );
+        logger.error("Category with this name already exists for this event");
+        return {
+          message: "Category already exists",
+          code: 409,
+          success: false,
+        };
       }
 
       const category = await Category.create({
@@ -35,23 +53,54 @@ export const categoryController = {
       );
 
       logger.info(`Category created successfully: ${category.name}`);
-      return populatedCategory;
+      return {
+        message: "Category created successfully",
+        code: 201,
+        success: true,
+        data: populatedCategory,
+      };
     } catch (error: any) {
       logger.error(`Failed to create category: ${error.message}`);
-      throw new Error(error.message || "Failed to create category");
+      // logger.error(error.message || "Failed to create category");
+      return {
+        message: "Failed to create category",
+        code: 500,
+        success: false,
+        data: null,
+      };
     }
   },
 
-  // Get all categories
   getCategories: async (_: any, args: any, context: any) => {
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const categories = await Category.find()
         .populate("event")
         .sort({ createdAt: -1 });
-      return categories;
+      return {
+        message: "Categories fetched successfully",
+        code: 200,
+        success: true,
+        data: categories,
+      };
     } catch (error: any) {
       logger.error(`Failed to fetch categories: ${error.message}`);
       throw new Error("Failed to fetch categories");
+      return {
+        message: "Failed to fetch categories",
+        code: 500,
+        success: false,
+        data: null,
+      };
     }
   },
 
@@ -59,16 +108,37 @@ export const categoryController = {
     const { id } = args;
 
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const category = await Category.findById(id).populate("event");
 
       if (!category) {
         throw new Error("Category not found");
       }
 
-      return category;
+      return {
+        message: "Category fetched successfully",
+        code: 200,
+        success: true,
+        data: category,
+      };
     } catch (error: any) {
       logger.error(`Failed to fetch category: ${error.message}`);
       throw new Error(error.message || "Failed to fetch category");
+      return {
+        message: "Failed to fetch category",
+        code: 500,
+        success: false,
+        data: null,
+      };
     }
   },
 
@@ -76,6 +146,16 @@ export const categoryController = {
     const { eventId } = args;
 
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const event = await Event.findById(eventId);
       if (!event) {
         throw new Error("Event not found");
@@ -97,6 +177,16 @@ export const categoryController = {
     const { id, name, description, eventId } = input;
 
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const category = await Category.findById(id);
 
       if (!category) {
@@ -147,6 +237,16 @@ export const categoryController = {
     const { id } = args;
 
     try {
+      if (!context?.user?.id) {
+        logger.warn(
+          "Unauthorized attempt to create event - no user in context",
+        );
+        return {
+          code: 401,
+          success: false,
+          message: "Authentication required to create an event",
+        };
+      }
       const category = await Category.findById(id);
 
       if (!category) {

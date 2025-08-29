@@ -4,14 +4,15 @@ import { JWTUtils } from "../../utils/jwtUtils";
 import { logger } from "../../utils/logger";
 export const authController = {
   registerOrganization: async (_: any, args: any, context: any) => {
-    const { name, password, description, phoneNumber, contactEmail } = args;
+    const { name, password, description, phoneNumber, contactEmail } =
+      args.createOrgInput;
     try {
       const organizationExists = await Organization.findOne({
         name,
         contactEmail,
       });
       if (organizationExists) {
-        throw new Error("Organization already exists");
+        logger.info("Organization already exists");
         return {
           code: 400,
           success: false,
@@ -32,22 +33,21 @@ export const authController = {
         name: organization.name,
         email: organization.contactEmail,
       });
-      await context.user.updateOne({
-        $push: { organizations: organization._id },
-      });
+
+      await organization.save();
+      logger.info("Organization registered successfully");
+      // await context.user.updateOne({
+      //   $push: { organizations: organization._id },
+      // });
       return {
         code: 200,
         success: true,
         message: "Organization registered successfully",
-        data: {
-          organization,
-          token,
-        },
+        token,
+        data: organization,
       };
-      logger.info("Organization registered successfully");
     } catch (error) {
-      console.error(error);
-      throw new Error("Failed to register organization");
+      logger.error("Failed to register organization");
       return {
         code: 500,
         success: false,
@@ -57,13 +57,13 @@ export const authController = {
     }
   },
   login: async (_: any, args: any, context: any) => {
-    const { contactEmail, password } = args;
+    const { contactEmail, password } = args.loginInput;
     try {
       const organization = await Organization.findOne({
         contactEmail: contactEmail,
       });
       if (!organization) {
-        throw new Error("Organization not found");
+        logger.error("Organization not found");
         return {
           code: 404,
           success: false,
@@ -76,7 +76,7 @@ export const authController = {
         organization.password,
       );
       if (!isPasswordValid) {
-        throw new Error("Invalid password");
+        logger.error("Invalid password");
         return {
           code: 401,
           success: false,
@@ -89,19 +89,16 @@ export const authController = {
         name: organization.name,
         email: organization.contactEmail,
       });
+      logger.info("Organization logged in successfully");
       return {
         code: 200,
         success: true,
         message: "Organization logged in successfully",
-        data: {
-          organization,
-          token,
-        },
+        token,
+        data: organization,
       };
-      logger.info("Organization logged in successfully");
     } catch (error) {
-      console.error(error);
-      throw new Error("Failed to login organization");
+      logger.error("Failed to login organization");
       return {
         code: 500,
         success: false,

@@ -1,15 +1,18 @@
 export const authTypeDef = `
   type Auth{
-  user:User!
+  code:Int!
+  message:String!
+  success:Boolean!
+  data:Organization!
   token:String!
   }
 
-  type User{
+  type Organization{
   id:ID!
   contactEmail:String!
   name:String!
   description:String!
-  phoneNumber:String!
+  phoneNumber:String
   }
 
   input createOrganizationInput{
@@ -21,7 +24,7 @@ export const authTypeDef = `
   }
 
   input loginInput{
-  email:String!
+  contactEmail:String!
   password:String!
   }
   extend type Query {
@@ -29,7 +32,7 @@ export const authTypeDef = `
     _authEmpty: String
   }
   extend type Mutation{
-  createOrganization(args:createOrganizationInput!):Auth!
-  login(args:loginInput!):Auth!
+  createOrganization(createOrgInput:createOrganizationInput!):Auth!
+  login(loginInput:loginInput!):Auth!
   }
   `;
