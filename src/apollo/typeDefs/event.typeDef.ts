@@ -30,8 +30,15 @@ export const eventTypeDef = `
   data:Event
   }
 
+  type MultipleEventResponse{
+  code:Int!
+  success:Boolean
+  message:String!
+  data: [Event]
+  }
+
   extend type Query{
-  getEvents: [Event]!
+  getEvents: MultipleEventResponse!
   getEventById(id:ID!):Event!
   }
 
