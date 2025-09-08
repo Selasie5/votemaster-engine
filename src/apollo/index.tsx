@@ -1,8 +1,22 @@
+import { mergeTypeDefs, mergeResolvers } from "@graphql-tools/merge";
+import { authTypeDef } from "./typeDefs/auth.typeDef";
+import { AuthResolver } from "./resolvers/auth.resolver";
+import { categoryTypeDef } from "./typeDefs/category.typeDef";
+import { categoryResolver } from "./resolvers/category.resolver";
+import { baseTypeDef } from "./typeDefs/base.typeDef";
+import { baseResolver } from "./resolvers/base.resolver";
+import { eventTypeDef } from "./typeDefs/event.typeDef";
+import { EventResolver } from "./resolvers/event.resolver";
 
-
-import {helloTypeDef} from './typeDefs/helloTypeDef';
-import helloResolver from './resolvers/helloResolver';
-import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge';
-
-export const typeDefs = mergeTypeDefs([helloTypeDef]);
-export const resolvers = mergeResolvers([helloResolver]);
+export const typeDefs = mergeTypeDefs([
+  baseTypeDef,
+  authTypeDef,
+  categoryTypeDef,
+  eventTypeDef,
+]);
+export const resolvers = mergeResolvers([
+  baseResolver,
+  AuthResolver,
+  categoryResolver,
+  EventResolver,
+]);
