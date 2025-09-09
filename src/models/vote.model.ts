@@ -121,7 +121,6 @@ const VoteSchema = new Schema(
   }
 );
 
-// Compound indexes for efficient queries
 VoteSchema.index({ event: 1, nominee: 1 });
 VoteSchema.index({ event: 1, category: 1 });
 VoteSchema.index({ 'voter.phoneNumber': 1, event: 1 });

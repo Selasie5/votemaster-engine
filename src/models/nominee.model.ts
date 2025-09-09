@@ -66,7 +66,6 @@ const NomineeSchema = new Schema(
   },
 );
 
-// Compound indexes for efficient queries
 NomineeSchema.index({ event: 1, category: 1 });
 NomineeSchema.index({ event: 1, voteCount: -1 });
 NomineeSchema.index({ category: 1, voteCount: -1 });
