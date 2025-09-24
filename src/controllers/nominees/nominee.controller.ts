@@ -5,6 +5,7 @@ import Category from "../../models/category.model";
 import { logger } from "../../utils/logger";
 
 export const nomineeController = {
+
   createNomineeForm: async (_: any, args: any, context: any) => {
     try {
       if (!context?.user?.id) {
@@ -17,6 +18,7 @@ export const nomineeController = {
       }
 
       const { eventId, categoryId, formFields } = args.input;
+
 
       const event = await Event.findById(eventId);
       const category = await Category.findById(categoryId);
@@ -58,7 +60,9 @@ export const nomineeController = {
         data: nomineeForm
       };
 
+
     } catch (error:any) {
+
       logger.error('Error creating nominee form:', error);
       return {
         code: 500,
@@ -93,7 +97,10 @@ export const nomineeController = {
         data: nomineeForm
       };
 
+
     } catch (error:any) {
+
+
       logger.error('Error fetching nominee form:', error);
       return {
         code: 500,
@@ -102,6 +109,7 @@ export const nomineeController = {
       };
     }
   },
+
 
   createNominee: async (_: any, args: any, context: any) => {
     try {
@@ -116,6 +124,7 @@ export const nomineeController = {
 
       const { fullName, description, category, event, imageURL, dynamicFields } = args.nominee;
 
+
       const eventDoc = await Event.findById(event);
       const categoryDoc = await Category.findById(category);
 
@@ -127,6 +136,7 @@ export const nomineeController = {
         };
       }
 
+
       const nomineeForm = await NomineeForm.findOne({
         event,
         category,
@@ -134,7 +144,9 @@ export const nomineeController = {
       });
 
       if (nomineeForm) {
+
         const validationResult = await nomineeController.validateDynamicFields(dynamicFields || {}, nomineeForm.formFields || []);
+
         if (!validationResult.isValid) {
           return {
             code: 400,
@@ -144,7 +156,6 @@ export const nomineeController = {
         }
       }
 
-     
       const existingNominee = await Nominee.findOne({
         fullName,
         category,
@@ -183,7 +194,9 @@ export const nomineeController = {
         data: nominee
       };
 
+
     } catch (error:any) {
+
       logger.error('Error creating nominee:', error);
       return {
         code: 500,
@@ -193,7 +206,7 @@ export const nomineeController = {
     }
   },
 
-  
+
   getNominees: async (_: any, args: any, context: any) => {
     try {
       const { eventId, categoryId, page = 1, limit = 20, sortBy = 'fullName', sortOrder = 'asc' } = args;
@@ -228,7 +241,9 @@ export const nomineeController = {
         }
       };
 
+
     } catch (error:any) {
+
       logger.error('Error fetching nominees:', error);
       return {
         code: 500,
@@ -238,7 +253,6 @@ export const nomineeController = {
     }
   },
 
-  
   updateNominee: async (_: any, args: any, context: any) => {
     try {
       if (!context?.user?.id) {
@@ -260,7 +274,6 @@ export const nomineeController = {
         };
       }
 
-     
       if (updates.dynamicFields) {
         const nomineeForm = await NomineeForm.findOne({
           event: nominee.event,
@@ -269,7 +282,9 @@ export const nomineeController = {
         });
 
         if (nomineeForm) {
+
           const validationResult = await nomineeController.validateDynamicFields(updates.dynamicFields || {}, nomineeForm.formFields || []);
+
           if (!validationResult.isValid) {
             return {
               code: 400,
@@ -293,7 +308,9 @@ export const nomineeController = {
         data: updatedNominee
       };
 
+
     } catch (error:any) {
+
       logger.error('Error updating nominee:', error);
       return {
         code: 500,
@@ -335,7 +352,9 @@ export const nomineeController = {
         message: 'Nominee deleted successfully'
       };
 
+
     } catch (error:any) {
+
       logger.error('Error deleting nominee:', error);
       return {
         code: 500,

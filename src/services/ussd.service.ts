@@ -40,7 +40,9 @@ export class USSDService {
       const response = await this.routeRequest(session, userInput, inputHistory);
       
       return response;
+
     } catch (error:any) {
+
       logger.error('USSD request handling failed:', error);
       return {
         response: "Sorry, something went wrong. Please try again later.",
@@ -381,7 +383,9 @@ export class USSDService {
           continueSession: false,
         };
       }
+
     } catch (error:any) {
+
       logger.error('Payment initiation error:', error);
       return {
         response: "Payment processing error. Please try again later.",
@@ -416,7 +420,9 @@ export class USSDService {
       });
       
       logger.info(`Cleaned up ${result.deletedCount} expired USSD sessions`);
+
     } catch (error:any) {
+
       logger.error('Session cleanup error:', error);
     }
   }
