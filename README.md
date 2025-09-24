@@ -4,7 +4,7 @@
 
 VoteMaster Engine is a comprehensive voting platform that supports multiple voting channels including USSD, Web, and Mobile applications. The platform provides secure payment processing, real-time vote counting, and detailed analytics for voting events.
 
-## 🏗️ Architecture
+##  Architecture
 
 ### Core Components
 
@@ -304,7 +304,7 @@ query GetVoteAnalytics($eventId: ID!) {
 }
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 ### Environment Setup
 
@@ -364,7 +364,7 @@ export const config = {
 };
 ```
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Installation
 
@@ -418,7 +418,7 @@ The application automatically connects to MongoDB using the provided URI. Ensure
 - `votes` - Vote records
 - `ussdsessions` - USSD session data
 
-## 🔒 Security Features
+##  Security Features
 
 ### Rate Limiting
 ```typescript
@@ -444,7 +444,7 @@ app.use(requestLogger);
 - Database model validation
 - Custom business logic validation
 
-## 🔄 Background Jobs
+##  Background Jobs
 
 The application runs several background jobs for maintenance:
 
@@ -466,7 +466,7 @@ GET /health
 }
 ```
 
-## 📊 Monitoring & Logging
+##  Monitoring & Logging
 
 ### Logging System
 The application uses a structured logging system:
@@ -534,7 +534,7 @@ src/
    - Add proper indexing
    - Implement validation
 
-## 🚀 Deployment
+##  Deployment
 
 ### Production Deployment
 
@@ -564,7 +564,7 @@ The project includes GitHub Actions workflow:
 - Dependency installation
 - Production deployment trigger
 
-## 📞 Support & Documentation
+##  Support & Documentation
 
 ### API Documentation
 - GraphQL Schema: Available at `/graphql` endpoint
@@ -578,7 +578,6 @@ The project includes GitHub Actions workflow:
 4. **Rate Limiting**: Adjust rate limiting parameters if needed
 
 ### Contact
-- Technical Issues: Create GitHub issue
 - Business Inquiries: contact@votemaster.com
 - Documentation: Refer to this README and code comments
 
