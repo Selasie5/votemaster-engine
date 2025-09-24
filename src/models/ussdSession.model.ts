@@ -71,6 +71,7 @@ const USSDSessionSchema = new Schema(
 );
 
 // TTL index to automatically delete expired sessions
+
 USSDSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 USSDSessionSchema.index({ phoneNumber: 1, status: 1 });
 

@@ -93,7 +93,7 @@ const NomineeFormSchema = new Schema(
   }
 );
 
-// Compound index for efficient queries
+
 NomineeFormSchema.index({ event: 1, category: 1 });
 
 const NomineeForm = mongoose.model<INomineeForm>("NomineeForm", NomineeFormSchema);
