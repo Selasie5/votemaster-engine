@@ -23,7 +23,7 @@ VoteMaster Engine is a comprehensive voting platform that supports multiple voti
 [Background Jobs] ← [Payment Webhooks] ← [Payment Provider]
 ```
 
-## 📱 Features & Use Cases
+##  Features & Use Cases
 
 ### 1. **USSD Voting System**
 
