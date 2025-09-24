@@ -58,7 +58,7 @@ export const nomineeController = {
         data: nomineeForm
       };
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Error creating nominee form:', error);
       return {
         code: 500,
@@ -93,7 +93,7 @@ export const nomineeController = {
         data: nomineeForm
       };
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Error fetching nominee form:', error);
       return {
         code: 500,
@@ -183,7 +183,7 @@ export const nomineeController = {
         data: nominee
       };
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Error creating nominee:', error);
       return {
         code: 500,
@@ -228,7 +228,7 @@ export const nomineeController = {
         }
       };
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Error fetching nominees:', error);
       return {
         code: 500,
@@ -293,7 +293,7 @@ export const nomineeController = {
         data: updatedNominee
       };
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Error updating nominee:', error);
       return {
         code: 500,
@@ -335,7 +335,7 @@ export const nomineeController = {
         message: 'Nominee deleted successfully'
       };
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Error deleting nominee:', error);
       return {
         code: 500,

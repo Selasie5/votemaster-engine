@@ -54,7 +54,7 @@ export const eventController = {
         message: "Event created successfully",
         data: populatedEvent,
       };
-    } catch (error) {
+    } catch (error:any) {
       logger.error("Failed to create event", error);
       return {
         code: 500,
