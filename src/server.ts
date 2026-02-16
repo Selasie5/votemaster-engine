@@ -9,7 +9,10 @@ import cors, { CorsRequest } from "cors";
 import { connectToDB } from "./config/db.config";
 import { resolvers, typeDefs } from "./apollo";
 import { JWTUtils } from "./utils/jwtUtils";
-
+import { requestLogger } from "./middleware/security.middleware";
+import ussdRoutes from "./routes/ussd.routes";
+import paymentRoutes from "./routes/payment.routes";
+import { BackgroundJobService } from "./services/backgroundJob.service";
 dotenv.config();
 
 const PORT = process.env.PORT || 4001;
@@ -70,7 +73,7 @@ async function startServer() {
                 name: string;
               };
             }
-          } catch (error) {
+          } catch (error:any) {
             logger.error("Error parsing token:", error);
           }
         }
@@ -79,10 +82,39 @@ async function startServer() {
     }),
   );
 
-  // Basic route
+  // Endpoint definitions
   app.get("/", (req, res) => {
     res.send("Hello World, VoteMaster");
   });
+
+  
+  app.use('/api/ussd', ussdRoutes);
+app.use('/api/payments', paymentRoutes);
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "VoteMaster API",
+    version: "1.0.0",
+    status: "running",
+    endpoints: {
+      graphql: "/graphql",
+      ussd: "/api/ussd",
+      payments: "/api/payments"
+    }
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    backgroundJobs: BackgroundJobService.getHealthStatus()
+  });
+});
+
+
+BackgroundJobService.start();
+
 
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: PORT }, () => resolve()),
